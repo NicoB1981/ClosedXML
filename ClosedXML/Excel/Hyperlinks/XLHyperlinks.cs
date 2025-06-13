@@ -63,6 +63,7 @@ internal class XLHyperlinks : IXLHyperlinks, ISheetListener
             return;
 
         var hyperlinkAreas = _hyperlinks.Keys.ToArray();
+        var changes = new List<(XLSheetRange newArea, XLHyperlink hyperlink)>();
         foreach (var hyperlinkArea in hyperlinkAreas)
         {
             var (success, newHlArea) = reposition(hyperlinkArea);
@@ -74,7 +75,12 @@ internal class XLHyperlinks : IXLHyperlinks, ISheetListener
 
             _hyperlinks.Remove(hyperlinkArea, out var hyperlink);
             if (newHlArea is not null)
-                _hyperlinks.Add(newHlArea.Value, hyperlink);
+                //_hyperlinks.Add(newHlArea.Value, hyperlink);
+                changes.Add((newHlArea.Value, hyperlink));
+        }
+        foreach (var change in changes)
+        {
+            _hyperlinks.Add(change.newArea, change.hyperlink);
         }
     }
 
